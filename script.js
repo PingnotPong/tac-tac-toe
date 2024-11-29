@@ -1,12 +1,13 @@
 const contentDiv = document.getElementById('content');
 let tableHTML = '<table>';
+let currentPlayer = 'circle';
 
 let playingField = [
     null,
-    'circle',
     null,
     null,
-    'cross',
+    null,
+    null,
     null,
     null,
     null,
@@ -23,7 +24,7 @@ function render() {
         for (let col = 0; col < 3; col++) {
             const cellIndex = row * 3 + col;
             const cellValue = playingField[cellIndex];
-            setSymbols(cellValue)
+            setSymbols(cellValue, cellIndex)
         }
         tableHTML += '</tr>';
     }
@@ -31,14 +32,17 @@ function render() {
     contentDiv.innerHTML = tableHTML;
 }
 
-function setSymbols(cellValue) {
+function setSymbols(cellValue, cellIndex) {
     let cellContent = '';
     if (cellValue === 'circle') {
         cellContent = generateCircle();
     } else if (cellValue === 'cross') {
         cellContent = generateCross();
     }
-    tableHTML += `<td>${cellContent}</td>`;
+    tableHTML += `
+                <td onclick="handleCellClick(${cellIndex}, this)">
+                    ${cellContent}
+                </td>`;
 }
 
 function generateCircle() {
@@ -101,4 +105,16 @@ function generateCross() {
             }
         </style>
     `;
+}
+
+function handleCellClick(cellIndex, cellElement) {
+    if (playingField[cellIndex] !== null) return;
+    playingField[cellIndex] = currentPlayer;
+    if (currentPlayer === 'circle') {
+        cellElement.innerHTML = generateCircle();
+    } else if (currentPlayer === 'cross') {
+        cellElement.innerHTML = generateCross();
+    }
+    cellElement.onclick = null;
+    currentPlayer = currentPlayer === 'circle' ? 'cross' : 'circle';
 }
